@@ -2,13 +2,12 @@ int vieww = 640;
 int viewh = 640;
 
 void setup() {
-  size(vieww, viewh);
+  size(640, 640);
   fill(255);
   background(255,255,255,128);
   loadPixels();
   for ( int i = 0 ; i < pixels.length ; i++ ) pixels[i] = 0;
   updatePixels();
-  noLoop();
 }
 
 int b1 = -1;
@@ -38,22 +37,18 @@ void keyPressed() {
   if (key == '=') {
     l++;
     background(255);
-    redraw();
   }
   else if (key == '+') {
     l += 10;
     background(255);
-    redraw();
   }
   else if (key == '-' && l > d + 1) {
     l--;
     background(255);
-    redraw();
   }
   else if (key == '_' && l > d + 5) {
     l -= 10;
     background(255);
-    redraw();
   }
   else {
     println("No change; l = " + l + ", d = " + d);
@@ -67,13 +62,16 @@ void mouseDragged() {
   stroke(0);
   line(b1, viewh - c1, pmouseX, pmouseY);
   println("actual p1 = (" + b1 + ", " + c1 + "), p2 = (" + pmouseX + ", " + pmouseY + ")");
-  redraw();
 }
 
 void mousePressed() {
   background(128);
   b1 = mouseX;
   c1 = viewh - mouseY;
+  b2 = -1;
+  c2 = -1;
+  d = 0.0;
+  l = -1;
 }
 
 void mouseReleased() {
@@ -94,7 +92,6 @@ void mouseReleased() {
   }
   d = dist(b1, c1, b2, c2);
   l = (int)(2 * d);
-  redraw();
 }
 
 float xshift(float a) {
@@ -168,7 +165,7 @@ float newton(float h, float k, float guess) {
   }
 }
 
-float catenary(float x, float a) {
+float catenaryY(float x, float a) {
   // The equation for a catenary, with horizontal and vertical shifts to put the vertex
   // where it needs to be to pass through the endpoints of the user-traced line segment.
   float x0 = xshift(a);
@@ -195,7 +192,7 @@ void draw() {
     // Draw the catenary for the "chain"
     stroke(0);
     for (int x = b1; x < b2; x++) {
-      float y = catenary(x, a);
+      float y = catenaryY(x, a);
       println("(" + x + ", " + y + ")");
       line(prev_x, prev_y, x, viewh - y);
       prev_x = x;
